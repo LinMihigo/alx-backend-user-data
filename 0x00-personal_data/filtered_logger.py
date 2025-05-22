@@ -11,6 +11,8 @@ def filter_datum(
         message: str,
         separator: str
         ) -> str:
+    """redactor function
+    """
     pattern = fr'({"|".join(fields)})=.*?{re.escape(separator)}'
     return re.sub(
         pattern,
