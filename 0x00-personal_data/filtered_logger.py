@@ -22,4 +22,4 @@ def filter_datum(
             if s.startswith(f):
                 s = s[:s.index('=') + 1] + redaction
         newstring.append(s)
-    return ';'.join(newstring) + ';'
+    return separator.join(newstring) + separator
