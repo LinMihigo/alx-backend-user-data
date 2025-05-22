@@ -27,16 +27,6 @@ def filter_datum(
         )
 
 
-def get_db() -> MySQLConnection:
-    """Connects to a secure MySQL database using environment variables."""
-    return mysql.connector.connect(
-        user=os.getenv("PERSONAL_DATA_DB_USERNAME", "root"),
-        password=os.getenv("PERSONAL_DATA_DB_PASSWORD", ""),
-        host=os.getenv("PERSONAL_DATA_DB_HOST", "localhost"),
-        database=os.getenv("PERSONAL_DATA_DB_NAME")
-    )
-
-
 def get_logger() -> logging.Logger:
     """Creates and returns a configured logger."""
     logger = logging.getLogger("user_data")
@@ -48,6 +38,16 @@ def get_logger() -> logging.Logger:
     logger.addHandler(handler)
 
     return logger
+
+
+def get_db() -> MySQLConnection:
+    """Connects to a secure MySQL database using environment variables."""
+    return mysql.connector.connect(
+        user=os.getenv("PERSONAL_DATA_DB_USERNAME", "root"),
+        password=os.getenv("PERSONAL_DATA_DB_PASSWORD", ""),
+        host=os.getenv("PERSONAL_DATA_DB_HOST", "localhost"),
+        database=os.getenv("PERSONAL_DATA_DB_NAME")
+    )
 
 
 def main() -> None:
