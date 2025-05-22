@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Task 0
 """
+import re
 from typing import List
-
 
 def filter_datum(
         fields: List[str],
@@ -10,16 +10,9 @@ def filter_datum(
         message: str,
         separator: str
         ) -> str:
-    """Returns the log message obsfuscated
-    """
-    # Find the keyword in fields
-    # Then change what's btn = and ; after the keyword
-    strings = message.split(separator)[:-1]
-    newstring = []
-
-    for s in strings:
-        for f in fields:
-            if s.startswith(f):
-                s = s[:s.index('=') + 1] + redaction
-        newstring.append(s)
-    return separator.join(newstring) + separator
+    pattern = fr'({"|".join(fields)})=.*?{re.escape(separator)}'
+    return re.sub(
+        pattern,
+        lambda m: f"{m.group(1)}={redaction}{separator}",
+        message
+        )
