@@ -8,6 +8,7 @@ import os
 import mysql.connector
 from mysql.connector.connection import MySQLConnection
 
+
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")  # PII to redact
 
 
@@ -40,7 +41,7 @@ def get_logger() -> logging.Logger:
     return logger
 
 
-def get_db() -> MySQLConnection:
+def get_db():
     """Connects to a secure MySQL database using environment variables."""
     return mysql.connector.connect(
         user=os.getenv("PERSONAL_DATA_DB_USERNAME", "root"),
@@ -50,13 +51,13 @@ def get_db() -> MySQLConnection:
     )
 
 
-def main() -> None:
+def main():
     """Fetch and display filtered user data from the database."""
-    db: MySQLConnection = get_db()
+    db = get_db()
     cursor = db.cursor()
     cursor.execute("SELECT * FROM users;")
 
-    fields: List[str] = [col[0] for col in cursor.description]
+    fields = [col[0] for col in cursor.description]
     logger = get_logger()
 
     for row in cursor:
