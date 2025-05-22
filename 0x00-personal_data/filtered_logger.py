@@ -9,14 +9,17 @@ def filter_datum(
         redaction: str,
         message: str,
         separator: str
-        ):
+        ) -> str:
     """Returns the log message obsfuscated
     """
     # Find the keyword in fields
     # Then change what's btn = and ; after the keyword
-    list = message.split(separator)[:-1]
+    strings = message.split(separator)[:-1]
+    newstring = []
 
-    for l in list:
+    for s in strings:
         for f in fields:
-            if l.startswith(f):
-                
+            if s.startswith(f):
+                s = s[:s.index('=') + 1] + redaction
+        newstring.append(s)
+    return ';'.join(newstring) + ';'
