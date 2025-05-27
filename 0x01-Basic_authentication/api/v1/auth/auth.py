@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Task 3
+"""Authentication module for the API.
 """
 import re
 from typing import List, TypeVar
