@@ -64,11 +64,21 @@ class DB:
     def update_user(self, user_id: int, **kwargs) -> None:
         """Update a user by id with given attributes
         """
-        user = self.find_user_by(id=user_id)
+        invalid_fields = [key for key in kwargs if not hasattr(User, key)]
 
-        for key, value in kwargs.items():
-            if not hasattr(user, key):
-                raise ValueError(f"Invalid attributes: {key}")
-            setattr(user, key, value)
+        if invalid_fields:
+            raise ValueError(f"Invalid fields: {', '.join(invalid_fields)}")
+
+        update_dict = {
+            getattr(User, key): value for key, value in kwargs.items()
+            }
+        updated_rows = self._session.query(User).filter(User.id == user_id)\
+            .update(
+            update_dict,
+            synchronize_session=False
+        )
+
+        if updated_rows == 0:
+            raise NoResultFound(f"User with id {user_id} not found")
 
         self._session.commit()
