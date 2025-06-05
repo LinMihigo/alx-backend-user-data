@@ -47,16 +47,19 @@ class DB:
         """Find a user by arbitrary keyword arguments
         """
         if not kwargs:
-            raise InvalidRequestError("No arguments provided")
+            raise InvalidRequestError("No search criteria provided")
+        
+        query = self._session.query(User)
 
-        try:
-            user = self._session.query(User).filter_by(**kwargs).one()
-        except NoResultFound:
-            raise
-        except Exception as e:
-            raise InvalidRequestError from e
-
-        return user
+        for key, value in kwargs.items():
+            if not hasattr(User, key):
+                raise InvalidRequestError(f"Invalid field: {key}")
+            query = query.filter(getattr(User, key) == value)
+        
+        result = query.first()
+        if result is None:
+            raise NoResultFound()
+        return result
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """Update a user by id with given attributes
