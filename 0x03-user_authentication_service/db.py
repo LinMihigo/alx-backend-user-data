@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy.exc import NoResultFound, InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound, InvalidRequestError
 
 from user import Base, User
 
@@ -48,14 +48,14 @@ class DB:
         """
         if not kwargs:
             raise InvalidRequestError("No search criteria provided")
-        
+
         query = self._session.query(User)
 
         for key, value in kwargs.items():
             if not hasattr(User, key):
                 raise InvalidRequestError(f"Invalid field: {key}")
             query = query.filter(getattr(User, key) == value)
-        
+
         result = query.first()
         if result is None:
             raise NoResultFound()
