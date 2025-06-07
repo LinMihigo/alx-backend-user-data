@@ -70,3 +70,45 @@ class Auth:
             return session_id
         except Exception:
             return None
+
+    def get_user_from_session_id(self, session_id: str) -> User | None:
+        """Return the user corresponding to the given session_id"""
+        if session_id is None:
+            return None
+        try:
+            return self._db.find_user_by(session_id=session_id)
+        except Exception:
+            return None
+
+    def destroy_session(self, user_id: int) -> None:
+        """Destroy a user's session by setting session_id to None"""
+        try:
+            self._db.update_user(user_id, session_id=None)
+        except Exception:
+            pass
+
+    def get_reset_password_token(self, email: str) -> str:
+        """Generates a reset password token for a user."""
+        user = self._db.find_user_by(email=email)
+        if user is None:
+            raise ValueError("User not found")
+
+        token = str(uuid.uuid4())
+        self._db.update_user(user.id, reset_token=token)
+        return token
+
+    def update_password(self, reset_token: str, password: str) -> None:
+        """Updates a user's password using a valid reset token."""
+        if not reset_token or not password:
+            raise ValueError("Missing token or password")
+
+        user = self._db.find_user_by(reset_token=reset_token)
+        if user is None:
+            raise ValueError("Invalid reset token")
+
+        hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt())
+        self._db.update_user(
+            user.id,
+            hashed_password=hashed_pw,
+            reset_token=None
+        )
