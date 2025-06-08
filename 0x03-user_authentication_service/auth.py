@@ -71,17 +71,22 @@ class Auth:
         except Exception:
             return None
 
-    def get_user_from_session_id(self, session_id: str) -> User | None:
+    def get_user_from_session_id(self, session_id: str | None) -> User | None:
         """Return the user corresponding to the given session_id"""
         if session_id is None:
             return None
         try:
-            return self._db.find_user_by(session_id=session_id)
+            user = self._db.find_user_by(session_id=session_id)
+            if user is None:
+                return None
+            return user
         except Exception:
             return None
 
     def destroy_session(self, user_id: int) -> None:
         """Destroy a user's session by setting session_id to None"""
+        if user_id is None:
+            return None
         try:
             self._db.update_user(user_id, session_id=None)
         except Exception:
